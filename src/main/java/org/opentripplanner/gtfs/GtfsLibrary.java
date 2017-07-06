@@ -86,10 +86,10 @@ public class GtfsLibrary {
 
     public static String convertIdToString(AgencyAndId aid) {
         if(aid == null) {
-            return "";
+            return null;
         }
         if(aid.getId() == null) {
-            return "";
+            return null;
         }
         if(aid.getAgencyId() == null) {
             return aid.getId();
