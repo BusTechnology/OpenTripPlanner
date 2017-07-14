@@ -85,6 +85,15 @@ public class GtfsLibrary {
     }
 
     public static String convertIdToString(AgencyAndId aid) {
+        if(aid == null) {
+            return null;
+        }
+        if(aid.getId() == null) {
+            return null;
+        }
+        if(aid.getAgencyId() == null) {
+            return aid.getId();
+        }
         return aid.getAgencyId() + ID_SEPARATOR + aid.getId();
     }
 
