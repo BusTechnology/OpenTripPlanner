@@ -6,6 +6,8 @@ import java.util.*;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -82,6 +84,7 @@ import graphql.schema.GraphQLType;
 import graphql.schema.GraphQLTypeReference;
 import graphql.schema.PropertyDataFetcher;
 import graphql.schema.TypeResolver;
+
 
 public class IndexGraphQLSchema {
     
@@ -2521,6 +2524,7 @@ public class IndexGraphQLSchema {
                     .build())
                 .dataFetcher(environment ->  {
                     List <AlertPatch> alerts = index.getAlerts();
+                    Logger logger = Logger.getLogger("AlertsLogger");
                     if(alerts != null) {
                         if(environment.getArgument("feeds") != null)
                             alerts = alerts
@@ -2537,11 +2541,17 @@ public class IndexGraphQLSchema {
                                     .map(qualifiedMode -> qualifiedMode.mode)
                                     .filter(TraverseMode::isTransit)
                                     .collect(Collectors.toSet());
+
                             alerts = alerts
                                      .stream()
-                                     .filter(alertPatch ->
-                                      modes.contains(GtfsLibrary.getTraverseMode(
-                                              index.routeForId.get(alertPatch.getRoute() instanceof  AgencyAndId ? alertPatch.getRoute() : alertPatch.getRoute().get(0)))))
+                                     .filter(alertPatch -> {
+                                         Route route = index.routeForId.get(alertPatch.getRoute() instanceof AgencyAndId ? alertPatch.getRoute() : alertPatch.getRoute().get(0));
+                                         if (route != null)
+                                            return modes.contains(GtfsLibrary.getTraverseMode(route));
+
+                                         logger.log(Level.SEVERE, "ROUTE is not in the graph for " + alertPatch.getAlert().alertDescriptionText);
+                                         return false;
+                                     })
                                      .collect(Collectors.toList());
                         }
                     }

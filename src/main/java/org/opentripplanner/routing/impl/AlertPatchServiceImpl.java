@@ -86,8 +86,12 @@ public class AlertPatchServiceImpl implements AlertPatchService {
         }
 
         List<AgencyAndId> routes = alertPatch.getRoute();
-        for( AgencyAndId route: routes) {
-            patchesByRoute.put(route, alertPatch);
+
+        if(routes != null) {
+            for (AgencyAndId route : routes) {
+                if (route != null)
+                    patchesByRoute.put(route, alertPatch);
+            }
         }
     }
 
@@ -130,9 +134,11 @@ public class AlertPatchServiceImpl implements AlertPatchService {
             patchesByStop.remove(stop, alertPatch);
         }
         List<AgencyAndId> routes = alertPatch.getRoute();
-        for( AgencyAndId route: routes) {
-            patchesByRoute.remove(route, alertPatch);
-        }
+
+        if(routes != null)
+            for( AgencyAndId route: routes)
+                if(route != null)
+                    patchesByRoute.remove(route, alertPatch);
 
         alertPatch.remove(graph);
     }

@@ -280,9 +280,9 @@ public class AlertPatch implements Serializable {
 
     @XmlJavaTypeAdapter(AgencyAndIdAdapter.class)
     public List<AgencyAndId> getRoute() {
-//        if(route.size() > 0)
-//            return route.get(route.size()-1);
-//        return null;
+        if (route.size() == 0)
+            return null;
+
         return route;
     }
 
