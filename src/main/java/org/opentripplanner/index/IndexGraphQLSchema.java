@@ -2524,7 +2524,7 @@ public class IndexGraphQLSchema {
                     .build())
                 .dataFetcher(environment ->  {
                     List <AlertPatch> alerts = index.getAlerts();
-                    Logger logger = Logger.getLogger("AlertsLogger");
+
                     if(alerts != null) {
                         if(environment.getArgument("feeds") != null)
                             alerts = alerts
@@ -2548,8 +2548,9 @@ public class IndexGraphQLSchema {
                                          Route route = index.routeForId.get(alertPatch.getRoute() instanceof AgencyAndId ? alertPatch.getRoute() : alertPatch.getRoute().get(0));
                                          if (route != null)
                                             return modes.contains(GtfsLibrary.getTraverseMode(route));
+                                         else if (alertPatch.shouldApplyToAllRoutes())
+                                             return true;
 
-                                         logger.log(Level.SEVERE, "ROUTE is not in the graph for " + alertPatch.getAlert().alertDescriptionText);
                                          return false;
                                      })
                                      .collect(Collectors.toList());

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.Map;
 
@@ -45,6 +46,8 @@ import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.vertextype.TransitStop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
 
 /**
  * This adds a note to all boardings of a given route or stop (optionally, in a given direction)
@@ -89,6 +92,8 @@ public class AlertPatch implements Serializable {
      */
     private int directionId = -1;
 
+    private boolean applyToAllRoutes = false;
+
     @XmlElement
     public Alert getAlert() {
         return alert;
@@ -115,12 +120,20 @@ public class AlertPatch implements Serializable {
     }
 
     public void apply(Graph graph) {
+
         Agency agency = null;
         if (feedId != null) {
             Map<String, Agency> agencies = graph.index.agenciesForFeedId.get(feedId);
             agency = this.agency != null ? agencies.get(this.agency) : null;
         }
-        Route route = (this.route != null && this.route.size() != 0) ? graph.index.routeForId.get(this.route.get(this.route.size()-1)) : null;
+
+        Route route = null;
+        if (this.route != null && this.route.size() != 0)
+            route = graph.index.routeForId.get(this.route.get(this.route.size()-1));
+
+        if(route == null && !this.applyToAllRoutes)
+            LOG.warn("ROUTE is not in the graph for " + this.getAlert().alertDescriptionText);
+
         Stop stop = this.stop != null ? graph.index.stopForId.get(this.stop) : null;
         Trip trip = this.trip != null ? graph.index.tripForId.get(this.trip) : null;
 
@@ -450,5 +463,15 @@ public class AlertPatch implements Serializable {
                 (route == null ? 0 : route.hashCode()) +
                 (alert == null ? 0 : alert.hashCode()) +
                 (feedId == null ? 0 : feedId.hashCode()));
+    }
+
+    public boolean shouldApplyToAllRoutes () {
+        return this.applyToAllRoutes;
+    }
+    public void disableApplyToAllRoutes () {
+        this.applyToAllRoutes = false;
+    }
+    public void enableApplyToAllRoutes () {
+        this.applyToAllRoutes = true;
     }
 }

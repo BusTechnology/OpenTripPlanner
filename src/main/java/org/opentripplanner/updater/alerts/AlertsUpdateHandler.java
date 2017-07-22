@@ -107,7 +107,7 @@ public class AlertsUpdateHandler {
                 informed = informed.toBuilder().setTrip(trip).build();
             }
             String patchId = createId(id, informed);
-
+            
             String routeId = null;
             if (informed.hasRouteId()) {
                 routeId = informed.getRouteId();
@@ -149,6 +149,14 @@ public class AlertsUpdateHandler {
                     patch.setDirectionId(direction);
                 }
             }
+            // TODO upon agreeing what shape a general alert would be, we would be enabling applyToAllRoutes flag
+            /*
+            else {
+                // we set an "applyToAllRoutes" boolean to true so the alert is displayed for all modes
+                patch.enableApplyToAllRoutes();
+            }
+            */
+
             if (tripId != null) {
                 patch.setTrip(new AgencyAndId(feedId, tripId));
             }
