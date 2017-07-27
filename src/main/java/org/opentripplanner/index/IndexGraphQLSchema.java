@@ -2542,18 +2542,23 @@ public class IndexGraphQLSchema {
                                     .filter(TraverseMode::isTransit)
                                     .collect(Collectors.toSet());
 
-                            alerts = alerts
-                                     .stream()
-                                     .filter(alertPatch -> {
-                                         Route route = index.routeForId.get(alertPatch.getRoute() instanceof AgencyAndId ? alertPatch.getRoute() : alertPatch.getRoute().get(0));
-                                         if (route != null)
-                                            return modes.contains(GtfsLibrary.getTraverseMode(route));
-                                         else if (alertPatch.shouldApplyToAllRoutes())
-                                             return true;
 
-                                         return false;
-                                     })
-                                     .collect(Collectors.toList());
+                            alerts = alerts
+                                    .stream()
+                                    .filter(alertPatch -> {
+                                        try {
+                                            Route route = index.routeForId.get(alertPatch.getRoute() instanceof AgencyAndId ? alertPatch.getRoute() : alertPatch.getRoute().get(0));
+                                                if (route != null)
+                                                    return modes.contains(GtfsLibrary.getTraverseMode(route));
+                                                 else if (alertPatch.shouldApplyToAllRoutes())
+                                                    return true;
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                            return false;
+                                        })
+                                        .collect(Collectors.toList());
+
                         }
                     }
 
