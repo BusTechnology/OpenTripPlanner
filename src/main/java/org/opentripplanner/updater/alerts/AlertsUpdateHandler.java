@@ -149,13 +149,16 @@ public class AlertsUpdateHandler {
                     patch.setDirectionId(direction);
                 }
             }
-            // TODO upon agreeing what shape a general alert would be, we would be enabling applyToAllRoutes flag
-            /*
-            else {
+
+            /*else {
                 // we set an "applyToAllRoutes" boolean to true so the alert is displayed for all modes
                 patch.enableApplyToAllRoutes();
             }
             */
+
+            // TODO upon agreeing what shape a general alert would be, we would be enabling applyToAllRoutes flag
+
+
 
             if (tripId != null) {
                 patch.setTrip(new AgencyAndId(feedId, tripId));

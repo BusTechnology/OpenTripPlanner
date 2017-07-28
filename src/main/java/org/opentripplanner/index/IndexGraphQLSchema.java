@@ -2547,7 +2547,14 @@ public class IndexGraphQLSchema {
                                     .stream()
                                     .filter(alertPatch -> {
                                         try {
-                                            Route route = index.routeForId.get(alertPatch.getRoute() instanceof AgencyAndId ? alertPatch.getRoute() : alertPatch.getRoute().get(0));
+                                            //Route route = index.routeForId.get(alertPatch.getRoute() instanceof AgencyAndId ? alertPatch.getRoute() : alertPatch.getRoute().get(0));
+                                               Route route = null;
+                                                if(alertPatch.getRoute() instanceof AgencyAndId)   {
+                                                    route = index.routeForId.get(alertPatch.getRoute());
+                                                } else if (alertPatch.getRoute() != null) {
+                                                    route = index.routeForId.get(alertPatch.getRoute().get(0));
+                                                }
+
                                                 if (route != null)
                                                     return modes.contains(GtfsLibrary.getTraverseMode(route));
                                                  else if (alertPatch.shouldApplyToAllRoutes())
