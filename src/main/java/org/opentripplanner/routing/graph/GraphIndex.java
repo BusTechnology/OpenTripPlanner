@@ -1078,11 +1078,18 @@ public class GraphIndex {
     }
 
     public List<AlertPatch> getAlertsForRoute(Route route) {
+      if(route == null){
+        return new ArrayList<AlertPatch>(1);//empty list
+      }
         return getAlertPatchStream()
                 .filter(alertPatch -> {
-                    for(AgencyAndId routeInAlerts: alertPatch.getRoute())
-                       if(routeInAlerts != null && route.getId().equals(routeInAlerts))
-                           return true;
+                  if(alertPatch != null)
+                     if(alertPatch.getRoute() != null)
+                          for(AgencyAndId routeInAlerts: alertPatch.getRoute())
+                            if(route != null)
+                              if(route.getId() != null)
+                                if(routeInAlerts != null && route.getId().equals(routeInAlerts))
+                                  return true;
 
                     return false;
                 })
